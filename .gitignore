@@ -1,0 +1,31 @@
+# Build outputs
+.gradle/
+build/
+app/build/
+app/release/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Local config
+local.properties
+gradle/wrapper/gradle-wrapper.jar
+
+# Secrets — MUST NOT commit
+app/src/main/assets/service_account.json
+*.keystore
+*.jks
+keystore.properties
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temp
+*.tmp
+*.bak

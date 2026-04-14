@@ -1,0 +1,13 @@
+# Force LF line endings for all text files so CI (Linux) and local (Windows) agree.
+* text=auto eol=lf
+
+# Binary files — leave alone.
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webp binary
+*.jar binary
+*.keystore binary
+*.jks binary
+*.xlsx binary
+*.xls binary

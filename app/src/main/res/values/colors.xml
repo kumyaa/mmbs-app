@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand palette from PRD §8.1 -->
+    <color name="brand_sky_blue">#4FC3F7</color>
+    <color name="brand_golden_yellow">#F9A825</color>
+    <color name="brand_orange_brown">#BF360C</color>
+    <color name="brand_red">#D32F2F</color>
+    <color name="brand_cream">#FFF8E1</color>
+    <color name="brand_white">#FFFFFF</color>
+    <color name="brand_grey">#888888</color>
+    <color name="brand_grey_light">#AAAAAA</color>
+
+    <!-- Sync status indicator palette -->
+    <color name="status_synced">#2E7D32</color>
+    <color name="status_pending">#F9A825</color>
+    <color name="status_failed">#C62828</color>
+</resources>

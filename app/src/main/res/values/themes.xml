@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base theme: AppCompat without ActionBar. We render our own top-bar in each screen. -->
+    <style name="Theme.MMBS" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/brand_orange_brown</item>
+        <item name="colorPrimaryDark">@color/brand_orange_brown</item>
+        <item name="colorAccent">@color/brand_sky_blue</item>
+        <item name="android:windowBackground">@color/brand_cream</item>
+        <item name="android:statusBarColor">@color/brand_cream</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>
