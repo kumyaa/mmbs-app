@@ -20,9 +20,6 @@ android {
 
         // No vector drawable bloat — we render simple drawables only.
         vectorDrawables { useSupportLibrary = false }
-
-        // Single-ABI app (pure JVM / Kotlin — no NDK).
-        ndk { abiFilters.clear() }
     }
 
     signingConfigs {
