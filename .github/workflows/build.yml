@@ -40,14 +40,21 @@ jobs:
           gradle-version: '8.5'
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
 
-      # Phase A injects the real service_account.json from a repo secret.
-      # For the scaffold build there's nothing to inject; we just ensure the file exists
-      # so assets loading code that references it doesn't crash once we add it.
-      - name: Write placeholder service account asset
+      # Inject the real service_account.json from the SERVICE_ACCOUNT_JSON
+      # secret. If the secret is missing (forks, first-time builds before the
+      # owner sets it), fall back to a placeholder so the scaffold still
+      # builds — runtime auth will fail with AuthNotConfiguredException.
+      - name: Write service account asset
+        env:
+          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
         run: |
           mkdir -p app/src/main/assets
-          if [ ! -f app/src/main/assets/service_account.json ]; then
+          if [ -n "$SERVICE_ACCOUNT_JSON" ]; then
+            printf '%s' "$SERVICE_ACCOUNT_JSON" > app/src/main/assets/service_account.json
+            echo "Wrote service_account.json from secret ($(wc -c < app/src/main/assets/service_account.json) bytes)"
+          else
             echo '{"placeholder":true}' > app/src/main/assets/service_account.json
+            echo "::warning::SERVICE_ACCOUNT_JSON secret missing — APK will not authenticate."
           fi
 
       - name: Build debug APK

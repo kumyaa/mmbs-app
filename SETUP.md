@@ -49,15 +49,54 @@ You'll be prompted to authenticate to GitHub. The simplest path on Windows is to
 
 This confirms the build pipeline works end-to-end. After that, every new phase will ship as a fresh APK through the same flow.
 
-## 6. (Later — Phase A) Add the service account secret
+## 6. Phase A — Add the service account secret
 
-When we reach Phase A authentication, you'll:
+Phase A talks to Google Sheets via a Service Account (no per-user OAuth). The
+JSON key is bundled into the APK at build time from a GitHub secret.
 
-1. Create a Google Cloud Service Account following a guide I'll write
-2. Share your spreadsheet with the service account's email (Editor access)
-3. Go to your GitHub repo → *Settings → Secrets and variables → Actions → New repository secret*
-4. Name: `SERVICE_ACCOUNT_JSON`
-5. Value: paste the full contents of the service account JSON
-6. The build workflow will inject this into the APK automatically
+### 6.1 Create the Service Account (one-time, in Google Cloud Console)
 
-**Do not** commit the service account JSON to the repo. `.gitignore` already blocks it.
+1. Go to https://console.cloud.google.com/ and create (or pick) a project.
+2. Enable the APIs the app uses:
+   - https://console.cloud.google.com/apis/library/sheets.googleapis.com → *Enable*
+   - https://console.cloud.google.com/apis/library/drive.googleapis.com  → *Enable*
+3. Open https://console.cloud.google.com/iam-admin/serviceaccounts → *Create service account*.
+   - Name: `mmbs-app`
+   - No role needed at the project level.
+   - *Done*.
+4. Click the new service account → *Keys* tab → *Add key → Create new key → JSON*. A `.json` file downloads.
+5. Open the JSON in a text editor and copy the value of `client_email` — looks like
+   `mmbs-app@<project>.iam.gserviceaccount.com`.
+
+### 6.2 Share the spreadsheet with that email
+
+1. Open `NGO_Accounting_System_v4.xlsx` in Google Sheets.
+2. *Share* → paste the `client_email` from step 4 → role *Editor* → *Send*.
+
+### 6.3 Add the secret to GitHub
+
+1. Repo → *Settings → Secrets and variables → Actions → New repository secret*.
+2. Name: `SERVICE_ACCOUNT_JSON`
+3. Value: paste the **full JSON file contents** (including the `{`/`}` braces and
+   the `private_key` field). Click *Add secret*.
+4. Trigger a rebuild: *Actions → Build APK → Run workflow*.
+
+The workflow writes the secret into `app/src/main/assets/service_account.json`
+during the build. The file is never committed.
+
+### 6.4 First-launch flow on the phone
+
+1. Install the APK and open it.
+2. Sign in with your email — must already be in the `AppUsers` sheet
+   (column A = email, column B = `Treasurer` / `Committee Member` / `Auditor`).
+3. Paste the spreadsheet URL or ID.
+4. The app does its first sync; KPIs appear on Home.
+
+### Security notes
+
+- The service account JSON is embedded in the APK. Anyone who extracts the APK
+  could read it and use it against the spreadsheet. Acceptable for a private
+  sideload to known committee members; not acceptable for a public listing.
+- Sheet edit history records every change as the service account, not the
+  individual user. Sign-in email is stored locally and used only for the
+  AppUsers gate.
