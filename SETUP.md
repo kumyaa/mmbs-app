@@ -70,7 +70,7 @@ JSON key is bundled into the APK at build time from a GitHub secret.
 
 ### 6.2 Share the spreadsheet with that email
 
-1. Open `NGO_Accounting_System_v4.xlsx` in Google Sheets.
+1. Open `MMBS_Accounting_System.xlsx` in Google Sheets.
 2. *Share* → paste the `client_email` from step 4 → role *Editor* → *Send*.
 
 ### 6.3 Add the secret to GitHub

@@ -48,6 +48,18 @@ class SyncProgressFragment : Fragment() {
                 }
                 progress.visibility = View.GONE
 
+                // If the sync itself had errors (auth, network, bad range, ...)
+                // surface the *real* message first — otherwise a blank local DB
+                // would look like "Access not authorised" which is misleading.
+                if (result.errors.isNotEmpty()) {
+                    status.text = getString(
+                        R.string.sync_error_fmt,
+                        result.errors.joinToString("; "),
+                    )
+                    retry.visibility = View.VISIBLE
+                    return@launch
+                }
+
                 // Access check: AppUsers must contain the signed-in email.
                 val email = ServiceLocator.prefs.userEmail.orEmpty()
                 val role = ServiceLocator.appUsersRepo.role(email)
@@ -62,13 +74,6 @@ class SyncProgressFragment : Fragment() {
                 when {
                     result.hasConflicts -> {
                         findNavController().navigate(R.id.conflictFragment)
-                    }
-                    result.errors.isNotEmpty() -> {
-                        status.text = getString(
-                            R.string.sync_error_fmt,
-                            result.errors.joinToString("; "),
-                        )
-                        retry.visibility = View.VISIBLE
                     }
                     else -> {
                         findNavController().navigate(
