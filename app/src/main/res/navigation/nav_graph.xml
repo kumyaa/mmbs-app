@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/signInFragment">
+
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="org.mmbs.tracker.ui.auth.SignInFragment"
+        android:label="@string/signin_title" />
+
+    <fragment
+        android:id="@+id/setupFragment"
+        android:name="org.mmbs.tracker.ui.auth.SetupFragment"
+        android:label="@string/setup_title" />
+
+    <fragment
+        android:id="@+id/syncProgressFragment"
+        android:name="org.mmbs.tracker.ui.auth.SyncProgressFragment"
+        android:label="@string/sync_in_progress" />
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="org.mmbs.tracker.ui.home.HomeFragment"
+        android:label="@string/home_title" />
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="org.mmbs.tracker.ui.search.GlobalSearchFragment"
+        android:label="@string/search_title" />
+
+    <fragment
+        android:id="@+id/memberListFragment"
+        android:name="org.mmbs.tracker.ui.member.MemberListFragment"
+        android:label="@string/members_title" />
+
+    <fragment
+        android:id="@+id/memberDetailFragment"
+        android:name="org.mmbs.tracker.ui.member.MemberDetailFragment"
+        android:label="@string/member_detail_title">
+        <argument
+            android:name="memberId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/memberEditFragment"
+        android:name="org.mmbs.tracker.ui.member.MemberEditFragment"
+        android:label="@string/member_edit_title_edit">
+        <argument
+            android:name="memberId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recordPaymentFragment"
+        android:name="org.mmbs.tracker.ui.member.RecordPaymentFragment"
+        android:label="@string/payment_title">
+        <argument
+            android:name="memberId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/conflictFragment"
+        android:name="org.mmbs.tracker.ui.conflict.ConflictResolutionFragment"
+        android:label="@string/conflict_title" />
+</navigation>
