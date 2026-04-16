@@ -70,6 +70,8 @@
     <!-- S-08 Member detail -->
     <string name="member_detail_title">Member</string>
     <string name="member_detail_payments">Payments</string>
+    <string name="member_detail_payments_none">No payments recorded. Tap Record payment to add one.</string>
+    <string name="member_detail_fy_empty">Not recorded — tap to add</string>
     <string name="member_detail_record">Record payment</string>
     <string name="member_detail_edit">Edit</string>
     <string name="member_detail_delete">Delete</string>

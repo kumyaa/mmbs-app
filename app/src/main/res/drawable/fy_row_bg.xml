@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Selectable row background for FY history entries on Member Detail.
+     Uses the system's selectableItemBackground for the ripple, with a thin
+     bottom divider so the rows visually separate without needing a
+     RecyclerView divider decoration. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/brand_white" />
+            <stroke android:width="1dp" android:color="#1A000000" />
+            <corners android:radius="6dp" />
+        </shape>
+    </item>
+</layer-list>
