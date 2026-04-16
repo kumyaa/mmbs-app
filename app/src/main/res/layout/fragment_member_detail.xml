@@ -60,6 +60,23 @@
             android:textSize="13sp"
             android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/familyHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/member_detail_family"
+            android:textColor="@color/brand_orange_brown"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/familyContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

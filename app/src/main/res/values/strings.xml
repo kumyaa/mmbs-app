@@ -73,6 +73,26 @@
     <string name="member_detail_payments_none">No payments recorded. Tap Record payment to add one.</string>
     <string name="member_detail_fy_empty">Not recorded — tap to add</string>
     <string name="member_detail_record">Record payment</string>
+    <string name="member_detail_family">Family</string>
+    <string name="member_detail_family_add">+ Add family member</string>
+    <string name="member_detail_family_wa_in">In MMBS WhatsApp group</string>
+    <string name="member_detail_family_wa_out">Not in WhatsApp group</string>
+    <string name="member_detail_family_call">Call</string>
+    <string name="member_detail_family_whatsapp">WhatsApp</string>
+    <string name="member_detail_family_edit">Edit</string>
+    <string name="member_detail_family_no_mobile">No mobile number on file.</string>
+    <string name="member_detail_family_full">All 3 family slots are full. Clear one from its Edit dialog to free a slot.</string>
+
+    <!-- Family edit dialog -->
+    <string name="family_dialog_title">Family member</string>
+    <string name="family_dialog_name">Name</string>
+    <string name="family_dialog_relation">Relation (e.g. Wife, Son)</string>
+    <string name="family_dialog_mobile">Mobile</string>
+    <string name="family_dialog_wa_switch">In MMBS WhatsApp group</string>
+    <string name="family_dialog_save">Save</string>
+    <string name="family_dialog_clear">Clear slot</string>
+    <string name="family_dialog_cancel">Cancel</string>
+    <string name="family_dialog_name_required">Name is required.</string>
     <string name="member_detail_edit">Edit</string>
     <string name="member_detail_delete">Delete</string>
     <string name="member_confirm_delete">Delete this member?</string>
