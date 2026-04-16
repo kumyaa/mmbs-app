@@ -27,6 +27,33 @@ object FinancialYear {
         return label(startYear)
     }
 
+    /** The FY that follows [currentLabel]. Useful during Jan-Mar for advance membership. */
+    fun nextLabel(cal: Calendar = Calendar.getInstance()): String {
+        val current = startYear(currentLabel(cal)) ?: return currentLabel(cal)
+        return label(current + 1)
+    }
+
+    /**
+     * Build the Record-Payment dropdown options: every FY detected in the
+     * sheet (passed in) plus the current and next FY, de-duplicated and
+     * sorted newest-first. The current FY is returned as the "default"
+     * selection index so the caller can pre-select it.
+     */
+    data class Options(val labels: List<String>, val defaultIndex: Int)
+
+    fun dropdownOptions(
+        detected: List<String>,
+        cal: Calendar = Calendar.getInstance(),
+    ): Options {
+        val current = currentLabel(cal)
+        val merged = (detected + current + nextLabel(cal))
+            .mapNotNull { normalize(it) }
+            .distinct()
+            .sortedByDescending { startYear(it) ?: -1 }
+        val idx = merged.indexOf(current).coerceAtLeast(0)
+        return Options(labels = merged, defaultIndex = idx)
+    }
+
     /** Parse a header label to its starting year. null if it doesn't match. */
     fun startYear(label: String): Int? {
         val m = LABEL_RE.matchEntire(label) ?: return null

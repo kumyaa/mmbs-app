@@ -26,13 +26,20 @@
             android:layout_marginTop="8dp"
             android:textSize="14sp" />
 
-        <EditText
-            android:id="@+id/fy"
+        <TextView
+            android:id="@+id/fyLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="@string/payment_fy"
-            android:inputType="text" />
+            android:text="@string/payment_fy"
+            android:textColor="@color/brand_grey"
+            android:textSize="12sp" />
+
+        <Spinner
+            android:id="@+id/fy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp" />
 
         <EditText
             android:id="@+id/amount"

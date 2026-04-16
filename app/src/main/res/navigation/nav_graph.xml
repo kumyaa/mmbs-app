@@ -61,6 +61,11 @@
         <argument
             android:name="memberId"
             app:argType="string" />
+        <argument
+            android:name="fy"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 
     <fragment

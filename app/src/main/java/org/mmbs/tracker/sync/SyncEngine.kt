@@ -130,6 +130,13 @@ class SyncEngine(
 
             // --- Membership Tracker ---
             val fyColumns = FinancialYear.detectColumns(membershipHdr.firstOrNull().orEmpty())
+            // Persist the detected FY labels so Record Payment can populate its
+            // dropdown even while offline. Skipped if the header came back empty
+            // (network flake / range misread) — we don't want to wipe a good
+            // previous list with an empty one.
+            if (fyColumns.isNotEmpty()) {
+                prefs.knownFyLabels = fyColumns.map { it.label }
+            }
             val membershipConflicts = runCatching {
                 syncMembership(membershipRows, fyColumns)
             }.getOrElse {

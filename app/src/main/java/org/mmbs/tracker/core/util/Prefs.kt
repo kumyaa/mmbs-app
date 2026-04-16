@@ -36,6 +36,20 @@ class Prefs(ctx: Context) {
         get() = sp.getString(KEY_FY_LABEL, null)
         set(v) = sp.edit().putString(KEY_FY_LABEL, v).apply()
 
+    /**
+     * Canonical "FY YYYY-YY" labels detected in the Membership Tracker header
+     * at the last successful sync. Stored comma-separated so the setter/getter
+     * handles List<String> without needing a JSON dependency for a trivial list.
+     * Empty list if never synced or no FY headers present.
+     */
+    var knownFyLabels: List<String>
+        get() = sp.getString(KEY_FY_LABELS, null)
+            ?.split(',')
+            ?.map { it.trim() }
+            ?.filter { it.isNotEmpty() }
+            ?: emptyList()
+        set(v) = sp.edit().putString(KEY_FY_LABELS, v.joinToString(",")).apply()
+
     fun clearAll() {
         sp.edit().clear().apply()
     }
@@ -47,6 +61,7 @@ class Prefs(ctx: Context) {
             .remove(KEY_LAST_SYNC)
             .remove(KEY_SHEET_MODIFIED)
             .remove(KEY_FY_LABEL)
+            .remove(KEY_FY_LABELS)
             .remove(KEY_ROLE)
             .apply()
     }
@@ -58,5 +73,6 @@ class Prefs(ctx: Context) {
         private const val KEY_LAST_SYNC = "last_sync_ms"
         private const val KEY_SHEET_MODIFIED = "sheet_modified_ms"
         private const val KEY_FY_LABEL = "fy_label"
+        private const val KEY_FY_LABELS = "fy_labels_csv"
     }
 }

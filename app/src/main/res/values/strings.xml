@@ -101,6 +101,7 @@
     <string name="payment_save">Save</string>
     <string name="payment_whatsapp">Send via WhatsApp</string>
     <string name="payment_saved">Payment recorded.</string>
+    <string name="payment_fy_missing">Pick a financial year first.</string>
 
     <!-- Common -->
     <string name="common_cancel">Cancel</string>
