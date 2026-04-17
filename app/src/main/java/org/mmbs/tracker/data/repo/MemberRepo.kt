@@ -16,11 +16,18 @@ class MemberRepo(private val dao: MemberDao) {
     suspend fun countByStatus(): List<StatusCount> = dao.countByStatus()
     suspend fun dirty(): List<MemberEntity> = dao.getDirty()
 
-    /** Returns the next MM-XXXX id, padded to 4 digits. */
+    /**
+     * Returns the next MM-XXXX id, padded to 4 digits.
+     *
+     * Safety floor: even if the DB is empty or carries an unexpectedly low
+     * max (e.g. fresh install before sync), we never emit an id below
+     * MM-0170, because MM-0001..MM-0169 are already taken in the live sheet.
+     * This avoids any chance of re-using a historic member number.
+     */
     suspend fun nextMemberId(): String {
         val last = dao.lastMemberId()
         val n = last?.removePrefix("MM-")?.toIntOrNull() ?: 0
-        return "MM-%04d".format(n + 1)
+        return "MM-%04d".format(n.coerceAtLeast(169) + 1)
     }
 
     suspend fun upsert(entity: MemberEntity) = dao.upsert(entity)
