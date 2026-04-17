@@ -3,7 +3,9 @@ package org.mmbs.tracker.ui.member
 import android.app.Dialog
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SwitchCompat
@@ -12,21 +14,15 @@ import androidx.fragment.app.setFragmentResult
 import org.mmbs.tracker.R
 
 /**
- * Inline edit dialog for a single family slot (fm2 / fm3 / fm4 on the
- * Members sheet row). Used by Member Detail for both "Add family member"
- * (blank slot) and "Edit" (populated slot) flows.
+ * Inline edit dialog for a single family slot (fm2 / fm3 / fm4).
  *
- * The dialog returns its result via FragmentResult. The host fragment
- * handles the actual Room + sheet write so this dialog stays
- * ServiceLocator-free and easy to test.
- *
- * Result bundle keys:
- *   - "slot"     : Int (2, 3, or 4)
- *   - "cleared"  : Boolean — user tapped "Clear slot" → wipe all 4 fields
- *   - "name"     : String
- *   - "relation" : String
- *   - "mobile"   : String
- *   - "waGroup"  : String ("Yes" or "No")
+ * Result bundle keys — all returned via [setFragmentResult] with [REQUEST_KEY]:
+ *   "slot"     Int  (2, 3, or 4)
+ *   "cleared"  Boolean — true means user tapped "Clear slot" → wipe all 4 fields
+ *   "name"     String
+ *   "relation" String (from [RELATIONS] list)
+ *   "mobile"   String
+ *   "waGroup"  String ("Yes" or "No")
  */
 class FamilyEditDialogFragment : DialogFragment() {
 
@@ -40,19 +36,29 @@ class FamilyEditDialogFragment : DialogFragment() {
 
         val view = layoutInflater.inflate(R.layout.dialog_family_edit, null)
         val nameEt = view.findViewById<EditText>(R.id.familyName)
-        val relEt = view.findViewById<EditText>(R.id.familyRelation)
+        val relSpinner = view.findViewById<Spinner>(R.id.familyRelation)
         val mobEt = view.findViewById<EditText>(R.id.familyMobile)
         val waSw = view.findViewById<SwitchCompat>(R.id.familyWaSwitch)
         val errorTv = view.findViewById<TextView>(R.id.familyError)
 
         nameEt.setText(initialName)
-        relEt.setText(initialRelation)
         mobEt.setText(initialMobile)
         waSw.isChecked = initialWaGroup.trim().equals("yes", ignoreCase = true)
 
-        // Build with setView + neutral/positive/negative buttons. Positive
-        // click behaviour is overridden after show() so we can validate name
-        // WITHOUT auto-dismissing the dialog on invalid input.
+        // Build the relation options list. If the DB holds an unknown legacy
+        // value, prepend it so we never silently change existing data.
+        val relOptions = if (initialRelation.isNotBlank() && initialRelation !in RELATIONS)
+            listOf(initialRelation) + RELATIONS
+        else
+            RELATIONS
+        val relAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            relOptions,
+        ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+        relSpinner.adapter = relAdapter
+        relSpinner.setSelection(relOptions.indexOf(initialRelation).coerceAtLeast(0))
+
         val dialog = AlertDialog.Builder(requireContext())
             .setTitle(R.string.family_dialog_title)
             .setView(view)
@@ -62,32 +68,34 @@ class FamilyEditDialogFragment : DialogFragment() {
             .create()
 
         dialog.setOnShowListener {
-            val positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            positive.setOnClickListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 val name = nameEt.text.toString().trim()
                 if (name.isEmpty()) {
                     errorTv.text = getString(R.string.family_dialog_name_required)
                     errorTv.visibility = View.VISIBLE
                     return@setOnClickListener
                 }
-                val result = Bundle().apply {
-                    putInt(RESULT_SLOT, slot)
-                    putBoolean(RESULT_CLEARED, false)
-                    putString(RESULT_NAME, name)
-                    putString(RESULT_RELATION, relEt.text.toString().trim())
-                    putString(RESULT_MOBILE, mobEt.text.toString().trim())
-                    putString(RESULT_WA_GROUP, if (waSw.isChecked) "Yes" else "No")
-                }
-                setFragmentResult(REQUEST_KEY, result)
+                setFragmentResult(
+                    REQUEST_KEY,
+                    Bundle().apply {
+                        putInt(RESULT_SLOT, slot)
+                        putBoolean(RESULT_CLEARED, false)
+                        putString(RESULT_NAME, name)
+                        putString(RESULT_RELATION, relSpinner.selectedItem?.toString().orEmpty())
+                        putString(RESULT_MOBILE, mobEt.text.toString().trim())
+                        putString(RESULT_WA_GROUP, if (waSw.isChecked) "Yes" else "No")
+                    },
+                )
                 dialog.dismiss()
             }
-            val neutral = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
-            neutral.setOnClickListener {
-                val result = Bundle().apply {
-                    putInt(RESULT_SLOT, slot)
-                    putBoolean(RESULT_CLEARED, true)
-                }
-                setFragmentResult(REQUEST_KEY, result)
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {
+                setFragmentResult(
+                    REQUEST_KEY,
+                    Bundle().apply {
+                        putInt(RESULT_SLOT, slot)
+                        putBoolean(RESULT_CLEARED, true)
+                    },
+                )
                 dialog.dismiss()
             }
         }
@@ -103,6 +111,17 @@ class FamilyEditDialogFragment : DialogFragment() {
         const val RESULT_RELATION = "relation"
         const val RESULT_MOBILE = "mobile"
         const val RESULT_WA_GROUP = "waGroup"
+
+        /** Canonical relation options shown to the user. */
+        val RELATIONS = listOf(
+            "Spouse",
+            "Son",
+            "Daughter",
+            "Father",
+            "Mother",
+            "Father in Law",
+            "Mother in Law",
+        )
 
         private const val ARG_SLOT = "slot"
         private const val ARG_NAME = "name"

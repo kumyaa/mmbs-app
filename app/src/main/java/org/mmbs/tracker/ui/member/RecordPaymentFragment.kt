@@ -27,13 +27,13 @@ import java.util.Locale
 
 /**
  * S-10 Record payment. Writes one FY cell on the member's Membership Tracker
- * row and then offers to ping the member on WhatsApp.
+ * row and offers to ping the member on WhatsApp.
  *
- * FY selection is a dropdown of all FYs the sheet knows about plus the
- * current and next FY (so advance payments in Jan-Mar work without editing
- * the sheet first). If the caller passes an `fy` argument, that FY is
- * pre-selected AND the existing cell values for that year are pre-filled,
- * making this screen doubly useful as "edit payment for FY X".
+ * FY selection is a dropdown; the caller may pass an `fy` arg to pre-select
+ * a specific year. The Status field is also a dropdown (New / Renewed /
+ * Unpaid / Lapsed). When editing an existing cell whose status doesn't match
+ * any standard option (legacy "Paid" etc.), that value is prepended to the
+ * list so it's preserved unless the treasurer explicitly changes it.
  */
 class RecordPaymentFragment : Fragment() {
 
@@ -51,49 +51,60 @@ class RecordPaymentFragment : Fragment() {
         val amount = view.findViewById<EditText>(R.id.amount)
         val date = view.findViewById<EditText>(R.id.date)
         val receipt = view.findViewById<EditText>(R.id.receipt)
-        val status = view.findViewById<EditText>(R.id.status)
+        val statusSpinner = view.findViewById<Spinner>(R.id.status)
         val save = view.findViewById<Button>(R.id.saveButton)
         val wa = view.findViewById<Button>(R.id.waButton)
 
-        // Populate the FY dropdown from the union of (sheet-detected FYs +
-        // current FY + next FY). Defaults to the current FY; if the caller
-        // passed an fy arg, select that instead.
+        // FY dropdown
         val known = ServiceLocator.prefs.knownFyLabels
         val opts = FinancialYear.dropdownOptions(known)
-        val adapter = ArrayAdapter(
+        fySpinner.adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
             opts.labels,
         ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
-        fySpinner.adapter = adapter
-        val initialIndex = argFy?.let { FinancialYear.normalize(it) }
+        val initialFyIndex = argFy?.let { FinancialYear.normalize(it) }
             ?.let { opts.labels.indexOf(it) }
             ?.takeIf { it >= 0 }
             ?: opts.defaultIndex
-        fySpinner.setSelection(initialIndex)
+        fySpinner.setSelection(initialFyIndex)
+
+        // Status dropdown — default adapter with standard options; may be
+        // rebuilt below if the existing cell carries an unknown legacy value.
+        bindStatusSpinner(statusSpinner, STATUS_OPTIONS, DEFAULT_STATUS)
 
         date.setText(SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH).format(Date()))
-        status.setText("Paid")
 
-        // Load the member + any existing cell for the pre-selected FY so the
-        // user sees current values (supports the "edit" flow from Member
-        // Detail's FY history list).
+        // Load member + existing cell so fields pre-fill when editing.
         viewLifecycleOwner.lifecycleScope.launch {
             val m = ServiceLocator.memberRepo.get(memberId) ?: return@launch
             memberLabel.text = "${m.primaryName} · ${m.memberId}"
 
-            val selectedFy = opts.labels.getOrNull(initialIndex) ?: return@launch
+            val selectedFy = opts.labels.getOrNull(initialFyIndex) ?: return@launch
             val membership = ServiceLocator.membershipRepo.get(memberId)
             val existing = membership?.let {
                 RowMapper.Membership.parseFees(it.feesJson)[selectedFy]
             }
             if (existing != null) {
-                status.setText(existing.status)
                 amount.setText(existing.amount)
                 date.setText(existing.date.ifBlank {
                     SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH).format(Date())
                 })
                 receipt.setText(existing.receipt)
+                // If legacy value (e.g. "Paid") isn't in standard list,
+                // prepend it so it's visible and not silently overwritten.
+                val statusOptions = if (existing.status.isNotBlank() &&
+                    existing.status !in STATUS_OPTIONS
+                ) {
+                    listOf(existing.status) + STATUS_OPTIONS
+                } else {
+                    STATUS_OPTIONS
+                }
+                bindStatusSpinner(
+                    statusSpinner,
+                    statusOptions,
+                    existing.status.ifBlank { DEFAULT_STATUS },
+                )
             }
         }
 
@@ -104,7 +115,7 @@ class RecordPaymentFragment : Fragment() {
                 return@setOnClickListener
             }
             val cell = FyCell(
-                status = status.text.toString().trim(),
+                status = statusSpinner.selectedItem?.toString().orEmpty(),
                 amount = amount.text.toString().trim(),
                 date = date.text.toString().trim(),
                 receipt = receipt.text.toString().trim(),
@@ -136,10 +147,26 @@ class RecordPaymentFragment : Fragment() {
             }
         }
 
-        // Drop back to detail after a successful save+navigate is intentional
-        // — user can add another payment without re-navigating if they want.
-        save.setOnLongClickListener {
-            findNavController().popBackStack(); true
-        }
+        save.setOnLongClickListener { findNavController().popBackStack(); true }
+    }
+
+    private fun bindStatusSpinner(
+        spinner: Spinner,
+        options: List<String>,
+        selected: String,
+    ) {
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            options,
+        ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+        spinner.adapter = adapter
+        val idx = options.indexOf(selected).takeIf { it >= 0 } ?: 0
+        spinner.setSelection(idx)
+    }
+
+    companion object {
+        val STATUS_OPTIONS = listOf("New", "Renewed", "Unpaid", "Lapsed")
+        const val DEFAULT_STATUS = "Renewed"
     }
 }

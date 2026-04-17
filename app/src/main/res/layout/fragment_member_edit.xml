@@ -47,24 +47,39 @@
             android:hint="@string/member_edit_address"
             android:inputType="textPostalAddress" />
 
-        <EditText
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/member_edit_first_year"
+            android:textColor="@color/brand_grey"
+            android:textSize="12sp" />
+
+        <Spinner
             android:id="@+id/firstYear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/member_edit_first_year"
-            android:inputType="text" />
+            android:minHeight="48dp" />
 
-        <EditText
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/member_edit_status"
+            android:textColor="@color/brand_grey"
+            android:textSize="12sp" />
+
+        <Spinner
             android:id="@+id/status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/member_edit_status"
-            android:inputType="text" />
+            android:minHeight="48dp" />
 
         <EditText
             android:id="@+id/notes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:hint="@string/member_edit_notes"
             android:inputType="textMultiLine" />
 

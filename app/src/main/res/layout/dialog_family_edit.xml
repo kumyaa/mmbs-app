@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Inline edit dialog for one family slot (fm2/fm3/fm4). Called from
-     MemberDetailFragment when the user taps Edit or + Add family member.
-     Name is required; leaving Name blank and hitting "Clear slot" wipes the
-     slot entirely so the sheet row ends up with 4 blanks. The WA-group
-     switch maps to "Yes"/"No" in the sheet cell (PRD §9.1 column I/M/Q). -->
+     MemberDetailFragment when the user taps Edit or + Add family member. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -21,17 +18,25 @@
             android:hint="@string/family_dialog_name"
             android:inputType="textPersonName" />
 
-        <EditText
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/family_dialog_relation"
+            android:textColor="@color/brand_grey"
+            android:textSize="12sp" />
+
+        <Spinner
             android:id="@+id/familyRelation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/family_dialog_relation"
-            android:inputType="text" />
+            android:minHeight="48dp" />
 
         <EditText
             android:id="@+id/familyMobile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:hint="@string/family_dialog_mobile"
             android:inputType="phone" />
 

@@ -72,6 +72,8 @@
     <string name="member_detail_payments">Payments</string>
     <string name="member_detail_payments_none">No payments recorded. Tap Record payment to add one.</string>
     <string name="member_detail_fy_empty">Not recorded — tap to add</string>
+    <string name="member_detail_show_older_fmt">Show older payments (%d)</string>
+    <string name="member_detail_hide_older">Hide older payments</string>
     <string name="member_detail_record">Record payment</string>
     <string name="member_detail_family">Family</string>
     <string name="member_detail_family_add">+ Add family member</string>

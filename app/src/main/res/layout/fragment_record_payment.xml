@@ -62,12 +62,19 @@
             android:hint="@string/payment_receipt"
             android:inputType="text" />
 
-        <EditText
+        <TextView
+            android:id="@+id/statusLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/payment_status"
+            android:textColor="@color/brand_grey"
+            android:textSize="12sp" />
+
+        <Spinner
             android:id="@+id/status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/payment_status"
-            android:inputType="text" />
+            android:minHeight="48dp" />
 
         <Button
             android:id="@+id/saveButton"

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Highlighted card background for the current financial year on the
+     Member Detail payments list. Thicker brand-coloured border + cream
+     tint distinguishes it from historic year cards at a glance. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#FFF8E1" />
+    <stroke android:width="2dp" android:color="@color/brand_orange_brown" />
+    <corners android:radius="6dp" />
+</shape>

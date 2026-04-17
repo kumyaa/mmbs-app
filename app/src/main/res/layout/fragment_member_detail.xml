@@ -43,6 +43,7 @@
             android:textStyle="bold"
             android:textSize="16sp" />
 
+        <!-- Current-year card always visible here -->
         <LinearLayout
             android:id="@+id/paymentsContainer"
             android:layout_width="match_parent"
@@ -58,6 +59,24 @@
             android:text="@string/member_detail_payments_none"
             android:textColor="@color/brand_grey"
             android:textSize="13sp"
+            android:visibility="gone" />
+
+        <!-- Toggle button + container for all other (non-current) FY cards -->
+        <Button
+            android:id="@+id/showOlderButton"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/brand_orange_brown"
+            android:textSize="13sp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/olderPaymentsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:visibility="gone" />
 
         <TextView
