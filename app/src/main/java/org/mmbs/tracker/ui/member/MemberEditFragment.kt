@@ -59,9 +59,10 @@ class MemberEditFragment : Fragment() {
         bindSpinner(statusSpinner, STATUS_OPTIONS, "Active")
 
         // First-year spinner: newest FY at the top, oldest (2019-20) at the
-        // bottom. This way adding a new enrolment doesn't require scrolling.
+        // bottom. Options use the sheet's short format "YYYY-YY" (no "FY"
+        // prefix) so values round-trip through the sheet unchanged.
         val fyOptions = buildFyOptions()
-        bindSpinner(firstYearSpinner, fyOptions, FinancialYear.currentLabel())
+        bindSpinner(firstYearSpinner, fyOptions, currentFyShort())
 
         if (memberId != null) {
             viewLifecycleOwner.lifecycleScope.launch {
@@ -138,11 +139,25 @@ class MemberEditFragment : Fragment() {
         /**
          * FY options from 2019-20 (earliest MMBS records) up to next FY,
          * returned newest-first so new enrolments don't require scrolling.
+         *
+         * Uses the short "YYYY-YY" format (no "FY" prefix) to match exactly
+         * what the Members sheet stores in column S, so values round-trip
+         * without format changes.
          */
         fun buildFyOptions(): List<String> {
             val nextStart = FinancialYear.startYear(FinancialYear.nextLabel()) ?: 2026
-            return (2019..nextStart).map { FinancialYear.label(it) }.reversed()
+            return (2019..nextStart).map { fyShort(it) }.reversed()
         }
+
+        /** Short label matching the sheet format: "2025-26" (no "FY" prefix). */
+        fun fyShort(startYear: Int): String {
+            val end = ((startYear + 1) % 100).toString().padStart(2, '0')
+            return "$startYear-$end"
+        }
+
+        /** Current FY in sheet format, e.g. "2025-26". */
+        fun currentFyShort(): String =
+            FinancialYear.currentLabel().removePrefix("FY ").trim()
 
         /**
          * Bind [spinner] with [options] and default-select [defaultValue].
